@@ -10,19 +10,6 @@ use utils::{set_panic_hook};
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-#[wasm_bindgen]
-extern {
-    fn alert(s: &str);
-}
-
-/*
-fn get_rle_image() -> Vec<u8> {
-   // create empty RLE encoded image
-   let mut encoded:Vec<u8> = Vec::new(); 
-   encoded.resize(64, 0);
-   encoded 
-}*/
-
 static mut ENCODEDBUFFER: Vec<u8> = Vec::new();
 
 #[wasm_bindgen]
@@ -63,7 +50,6 @@ pub fn decode() {
 }
 
 #[wasm_bindgen]
-pub fn greet() {
-    //alert("Hello, dicomrle-wasm!");
+pub fn initialize() {
     set_panic_hook();
 }

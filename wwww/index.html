@@ -1,11 +1,119 @@
-<!DOCTYPE html>
+<!--
+Copyright (c) Chris Hafey.
+SPDX-License-Identifier: MIT
+-->
+<!DOCTYPE HTML>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Hello wasm-pack!</title>
-  </head>
-  <body>
-    <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">   
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="./bootstrap.js"></script>
-  </body>
+  </head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>JPEG Baseline Decoding with WebAssembly</h1>
+        <p class="lead">
+          Select an image or drag and drop a JPEG file.  Files dropped here remain local in your browser, they are not uploaded anywhere.
+      </p>
+      <div class="row">
+        <select id="imageSelector">
+          <option value="../../test/fixtures/j2k/CT1.j2k" selected>CT1</option>
+          <option value="../../test/fixtures/j2k/CT2.j2k">CT2</option>
+          <option value="../../test/fixtures/j2k/MG1.j2k">MG1</option>
+          <option value="../../test/fixtures/j2k/MR1.j2k">MR1</option>
+          <option value="../../test/fixtures/j2k/MR2.j2k">MR2</option>
+          <option value="../../test/fixtures/j2k/MR3.j2k">MR3</option>
+          <option value="../../test/fixtures/j2k/MR4.j2k">MR4</option>
+          <option value="../../test/fixtures/j2k/NM1.j2k">NM1</option>
+          <option value="../../test/fixtures/j2k/RG1.j2k">RG1</option>
+          <option value="../../test/fixtures/j2k/RG2.j2k">RG2</option>
+          <option value="../../test/fixtures/j2k/RG3.j2k">RG3</option>
+          <option value="../../test/fixtures/j2k/SC1.j2k">SC1</option>
+          <option value="../../test/fixtures/j2k/US1.j2k">US1</option>
+          <option value="../../test/fixtures/j2k/VL1.j2k">VL1</option>
+          <option value="../../test/fixtures/j2k/VL2.j2k">VL2</option>
+          <option value="../../test/fixtures/j2k/VL3.j2k">VL3</option>
+          <option value="../../test/fixtures/j2k/VL4.j2k">VL4</option>
+          <option value="../../test/fixtures/j2k/VL5.j2k">VL5</option>
+          <option value="../../test/fixtures/j2k/VL6.j2k">VL6</option>
+          <option value="../../test/fixtures/j2k/XA1.j2k">XA1</option>
+        </select>
+        <button id="benchmark">Benchmark</button>
+        <span>Status:</span><span id="status"></span>
+      </div>
+    </div>
+    <div class="row">
+      <label><input id="visualizeDeltas" type="checkbox" value="">Visualize Deltas</label>   
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+      <b>Image Properties</b>  
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-md-4">Encode Time: <span id="encodeTime"></span></div>
+      <div class="col-md-4">Decode Time: <span id="decodeTime"></span></div>
+      <div class="col-md-4">Display Time: <span id="displayTime"></span></div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">Encoded Size: <span id="encodedSize"></span></div>
+      <div class="col-md-4">Decoded Size: <span id="decodedSize"></span></div>
+      <div class="col-md-4">Compression Ratio: <span id="compressionRatio"></span></div>
+     </div>
+    <div class="row">
+      <div class="col-md-4">Resolution: <span id="resolution"></span></div>
+      <div class="col-md-4">Pixel Format: <span id="pixelFormat"></span></div>
+      <div class="col-md-4">Component Count: <span id="componentCount"></span></div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">Min Pixel: <span id="minPixel"></span></div>
+      <div class="col-md-4">Max Pixel: <span id="maxPixel"></span></div>
+      <div class="col-md-4">Dynamic Range: <span id="dynamicRange"></span></div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        <b>Decoding Parameters</b>  
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <span>Encoded Bytes Read: </span><span id="encodedBytesRead">0</span>
+        <input type="range" class="custom-range" id="encodedBytesReadRange" min="0" max="5" value="0">
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        <b>Encoding Parameters</b>  
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+          <input id="progressive" type="checkbox" checked value="">Progressive  
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <span>Image Quality: </span><span id="targetCompressionRatio">100</span>
+        <input type="range" class="custom-range" id="targetCompressionRatioRange" min="0" max="99" value="0">
+      </div>
+    </div>
+    <div class="row">
+      
+      <div class="col-md-12">
+        <button id="download">Download</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <canvas id='myCanvas' width="512" height="512"/>
+    </div>
+  </div>
+</body>
+
+<script>
+
+</script>
 </html>
