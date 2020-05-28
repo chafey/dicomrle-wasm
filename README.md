@@ -17,6 +17,8 @@
   <sub>Built with 🦀🕸 by <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a></sub>
 </div>
 
+[click here to see it live!](https://chafey.github.io/dicomrle-wasm/wwww/)
+
 ## About
 
 [**📚 Read this template tutorial! 📚**][template-docs]
