@@ -1,0 +1,15 @@
+{
+  "name": "dicomrle-wasm",
+  "collaborators": [
+    "Chris Hafey <chafey@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "dicomrle_wasm_bg.wasm",
+    "dicomrle_wasm.js",
+    "dicomrle_wasm.d.ts"
+  ],
+  "module": "dicomrle_wasm.js",
+  "types": "dicomrle_wasm.d.ts",
+  "sideEffects": false
+}
