@@ -213,6 +213,9 @@ wasm.initialize();
     return decodedBuffer;
   }
 
+  function encode(iterations = 1) {
+  }
+
   /*
   function encode(iterations = 1) {
     // Setup buffer
@@ -378,7 +381,7 @@ wasm.initialize();
     $('#benchmark').click(function(e) {
       $('#status').text('Please wait while benchmark runs....');
       setTimeout(() => {
-        const iterations = 5;
+        const iterations = 10;
         decode(iterations)
         encode(iterations)
         $('#status').text('OK - ' + iterations + ' iterations encode/decode');
