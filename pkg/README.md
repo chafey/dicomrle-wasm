@@ -17,6 +17,8 @@
   <sub>Built with 🦀🕸 by <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a></sub>
 </div>
 
+[click here to see it live!](https://chafey.github.io/dicomrle-wasm/wwww/)
+
 ## About
 
 [**📚 Read this template tutorial! 📚**][template-docs]
@@ -67,3 +69,8 @@ wasm-pack publish
   for logging panic messages to the developer console.
 * [`wee_alloc`](https://github.com/rustwasm/wee_alloc), an allocator optimized
   for small code size.
+
+
+## Hot reloading with webpack
+
+> npm run start

@@ -210,13 +210,6 @@ wasm.initialize();
     $('#decodeTime').text(((end-begin) / iterations).toFixed(2) + ' ms');
 
     //frameInfo = decoder.getFrameInfo();
-    frameInfo = {
-      width: 512,
-      height: 512,
-      bitsPerSample: 16,
-      isSigned: true,
-      componentCount: 1
-    }
     // Display image properties
     $('#status').text('OK');
     $('#resolution').text(''+frameInfo.width + 'x' + frameInfo.height);
@@ -278,9 +271,36 @@ wasm.initialize();
       return response.arrayBuffer();
     })
     .then((arrayBuffer) => {
+      if(url.endsWith('ct.rle') ||
+         url.endsWith('ct1.rle') ||
+         url.endsWith('ct2.rle')) {
+          frameInfo = {
+            width: 512,
+            height: 512,
+            bitsPerSample: 16,
+            isSigned: true,
+            componentCount: 1
+          }
+         } else if(url.endsWith('us1.rle')) {
+          frameInfo = {
+            width: 640,
+            height: 480,
+            bitsPerSample: 8,
+            isSigned: false,
+            componentCount: 3
+          }
+         } else if(url.endsWith('rf1.rle')) {
+          frameInfo = {
+            width: 512,
+            height: 512,
+            bitsPerSample: 8,
+            isSigned: false,
+            componentCount: 1
+          }
+         }
       loadArrayBuffer(arrayBuffer);
-    }).catch(function() {
-      $('#status').text('error loading ' + url);
+    }).catch(function(e) {
+      $('#status').text('error loading ' + url + e);
     });
   }
 
@@ -318,7 +338,7 @@ wasm.initialize();
 
   function main() {
 
-    init('rleimages/ct.rle');
+    init('https://chafey.github.io/dicomrle-rs/tests/rleimage/ct.rle');
 
     $('#imageSelector').change(function(e) {
       reset();
