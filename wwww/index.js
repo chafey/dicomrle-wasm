@@ -19,10 +19,8 @@ wasm.initialize();
   let frameInfo = undefined;
   let compressionRatio = 0;
   let minMax = undefined;
-  let progressionOrder = undefined;
   let decodeLevel = 0;
   let decodeLayer = 0;
-  let numDecompositionsToEncode = 5;
 
   function getMinMax(frameInfo, pixelData) {
     const numPixels = frameInfo.width * frameInfo.height * frameInfo.componentCount;
@@ -82,20 +80,15 @@ wasm.initialize();
       $('#maxPixel').text('' + minMax.max);
     }
 
-    //console.log(minMax);
     let dynamicRange = minMax.max - minMax.min;
     $('#dynamicRange').text('' + dynamicRange);
-    //console.log('dynamicRange=', dynamicRange);
     let bitsOfData = 1;
     while(dynamicRange > 1) {
       dynamicRange = dynamicRange >> 1;
       bitsOfData++;
     }
-    //console.log('bitsOfData = ', bitsOfData);
     let bitShift = bitsOfData - 8;
     const offset = -minMax.min;
-    //console.log('bitShift=', bitShift);
-    //console.log('offset=', offset);
     
     for(var y=0; y < frameInfo.height; y++) {
       for (var x = 0; x < frameInfo.width; x++) {
@@ -139,8 +132,6 @@ wasm.initialize();
           deltas[inOffset++] = Math.abs(comp - unc);
       }
     }
-    const deltaMinMax = getMinMax(frameInfo, deltas);
-    console.log('deltas min/max', deltaMinMax);
     inOffset = 0;
 
     for(var y=0; y < frameInfo.height; y++) {
@@ -191,13 +182,15 @@ wasm.initialize();
   function decode(iterations = 1) {
     $('#encodedSize').text('' + encodedBitStream.length.toLocaleString() + ' bytes');
 
+    // allocate buffer for encoded bits in wasm memory 
     const encodedBufferPtr = wasm.get_encoded_buffer(encodedBitStream.length);
     const encodedBuffer = new Uint8Array(memory.buffer, encodedBufferPtr, encodedBitStream.length);
     // copy RLE encoded image bits into WASM memory
     encodedBuffer.set(encodedBitStream);
 
     // Set decoded buffer size
-    const encodedBufferLength = 512 * 512 * 2; // 512kb for CT image
+    const bytesPerPixel = frameInfo.bitsPerSample > 8 ? 2 : 1;
+    const encodedBufferLength = frameInfo.width * frameInfo.height * frameInfo.componentCount * bytesPerPixel; 
     const decodedBufferPtr = wasm.get_decoded_buffer(encodedBufferLength);
     const decodedBuffer = new Uint8Array(memory.buffer, decodedBufferPtr, encodedBufferLength);
 
@@ -209,34 +202,22 @@ wasm.initialize();
     const end = performance.now();
     $('#decodeTime').text(((end-begin) / iterations).toFixed(2) + ' ms');
 
-    //frameInfo = decoder.getFrameInfo();
-    // Display image properties
     $('#status').text('OK');
     $('#resolution').text(''+frameInfo.width + 'x' + frameInfo.height);
     $('#pixelFormat').text(''+frameInfo.bitsPerSample +' bpp ' + (frameInfo.isSigned ? 'signed' : 'unsigned'));
     $('#componentCount').text(''+frameInfo.componentCount);
-
-    //$('#colorTransform').text('' + decoder.getColorSpace());
-
-    // Display Image
-    //var decodedBuffer = decoder.getDecodedBuffer();
-    //console.log('decodedBuffer=', decodedBuffer);
-
     $('#decodedSize').text(''+decodedBuffer.length.toLocaleString() + " bytes");
     $('#compressionRatio').text('' + (decodedBuffer.length /encodedBitStream.length).toFixed(2) + ":1");
    
     display(frameInfo, decodedBuffer, 2);
-    //frameInfo = decoder.getFrameInfo();
+    return decodedBuffer;
   }
 
+  /*
   function encode(iterations = 1) {
     // Setup buffer
     const decodedBytes = encoder.getDecodedBuffer(frameInfo);
     decodedBytes.set(uncompressedImageFrame);
-    const progressive = $('#progressive').is(":checked"); 
-
-    encoder.setProgressive(progressive);
-    encoder.setQuality(compressionRatio);
 
     // Do the encode
     const begin = performance.now(); // performance.now() returns value in milliseconds
@@ -246,19 +227,18 @@ wasm.initialize();
     const end = performance.now();
     $('#encodeTime').text(((end-begin) / iterations).toFixed(2) + ' ms');
   }
+  */
 
   function loadArrayBuffer(arrayBuffer) {
     try {
       fullEncodedBitStream = new Uint8Array(arrayBuffer);
       const numBytes = 0;// 122003;
       encodedBitStream = new Uint8Array(arrayBuffer, 0, fullEncodedBitStream.length -numBytes);
-      //encodedBitStream = new Uint8Array(arrayBuffer);
       $('#encodedBytesRead').text('' + encodedBitStream.length.toLocaleString() + ' / ' + fullEncodedBitStream.length.toLocaleString() + ' bytes ');
       $('#encodedBytesReadRange').attr('max', encodedBitStream.length-1);
-      //$('#encodedBytesReadRange').attr('max', 512);
-      decode();
-      //uncompressedImageFrame = new Uint8Array(decoder.getDecodedBuffer().length);
-      //uncompressedImageFrame.set(decoder.getDecodedBuffer());
+      const decodedBuffer = decode();
+      uncompressedImageFrame = new Uint8Array(decodedBuffer.length);
+      uncompressedImageFrame.set(decodedBuffer);
     }
     catch(ex) {
       $('#status').text('Exception thrown while parsing ' + ex);
@@ -333,8 +313,6 @@ wasm.initialize();
     $('#imageSelector').val(path);
     load(path);
   }
-
- 
 
   function main() {
 
