@@ -27,6 +27,9 @@ static mut DECODEDBUFFER: Vec<u8> = Vec::new();
 pub fn get_decoded_buffer(encoded_size: usize) -> *mut u8 {
     let unsafe_ptr = unsafe {    
         DECODEDBUFFER.resize(encoded_size, 0);
+        for v in &mut DECODEDBUFFER {
+            *v = 0;
+        }
         DECODEDBUFFER.as_mut_ptr()
     };
     unsafe_ptr
